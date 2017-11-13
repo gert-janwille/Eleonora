@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/gert-janwille/Eleonora">
-    <img width="250" heigth="250" src="https://raw.github.com/gert-janwille/Eleonora/master/docs/eleonora-official.png">
+    <img width="250" heigth="250" src="https://raw.github.com/gert-janwille/Eleonora/master/docs/assets/eleonora-official.png">
   </a>
   <br/>
   <h1>Mrs. Eleonora</h1>
