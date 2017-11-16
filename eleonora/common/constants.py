@@ -3,7 +3,11 @@
 
 import os
 
-VERSION = "0.0.1"
+VERSION = "BETA 0.0.1"
+
+NUMBER_OF_DETECTION = 5
+FACE_CASCADE_FILE = os.path.join('./eleonora/assets/haarcascades/','haarcascade_frontalface_alt.xml')
+
 
 # Console colors
 W = '\033[0m'    # white (normal)
@@ -15,5 +19,3 @@ P = '\033[35m'   # purple
 C = '\033[36m'   # cyan
 GR = '\033[37m'  # gray
 T = '\033[93m'   # tan
-
-TERM = T + 'HIVE > '+ W
