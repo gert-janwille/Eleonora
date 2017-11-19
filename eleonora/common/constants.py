@@ -6,7 +6,7 @@ import os
 VERSION = "BETA 0.0.1"
 
 NUMBER_OF_DETECTION = 5
-FACE_CASCADE_FILE = os.path.join('./eleonora/assets/haarcascades/','haarcascade_frontalface_alt.xml')
+FACE_CASCADE_FILE = os.path.join('./eleonora/data/haarcascades/','haarcascade_frontalface_alt.xml')
 
 
 # Console colors

@@ -17,7 +17,7 @@ cap = cv2.VideoCapture(0)
 def saveFace(gray, x, y, w, h):
     # Save just the rectangle faces in SubRecFaces
     sub_face = gray[y:y+h, x:x+w]
-    FaceFileName = "./eleonora/assets/faces/face_" + str(time.time()) + ".jpg"
+    FaceFileName = "./eleonora/data/faces/face_" + str(time.time()) + ".jpg"
     cv2.imwrite(FaceFileName, sub_face)
 
 def showFrameRect(gray, x, y, w, h):
@@ -44,6 +44,8 @@ def countDetection(faces):
 def detectFaces():
     global counter
 
+    print ('[' + T + '+' + W + '] Looking for faces')
+
     while process_this_frame:
 
         ret, frame = cap.read()
@@ -56,7 +58,7 @@ def detectFaces():
 
         countDetection(faces)
 
-        print("Faces Detect: %s" % len(faces), end="\r")
+        print("Faces Detect: %s%s%s" % (T, len(faces), W), end="\r")
 
         for idx, f in enumerate(faces):
             (x, y, w, h) = f
