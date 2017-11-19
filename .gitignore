@@ -20,10 +20,10 @@ var/
 settings.py
 Icon?
 
-training/*.jpg
-training/*.png
+training/**/*.jpg
+training/**/*.png
 
-eleonora/data/*.jpg
-eleonora/data/*.png
+eleonora/data/**/*.jpg
+eleonora/data/**/*.png
 
 .datasets/
