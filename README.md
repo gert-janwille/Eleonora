@@ -1,12 +1,12 @@
 <div align="center">
   <a href="https://github.com/gert-janwille/Eleonora">
-    <img width="250" heigth="250" src="https://raw.github.com/gert-janwille/Eleonora/master/docs/assets/eleonora-official.png">
+    <img width="250" height="250" src="https://raw.github.com/gert-janwille/Eleonora/master/docs/assets/eleonora-official.png">
   </a>
   <br/>
   <br/>
   <br/>
   <p>
-    Mrs. Eleonora is an Artificial Intelligence Robot made to recognize, greet and learn persons. She will recognize emotions to be able to interact with the user and give the user support.
+    Mrs. Eleonora is an Artificial Intelligence Robot made to recognise, greet and learn people. She will recognise emotions to be able to interact with the user and give the user support.
 </div>
 
 
