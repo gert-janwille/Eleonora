@@ -12,10 +12,6 @@ import eleonora.training.modules.cnn as cnn
 img_rows, img_cols = 200, 200
 SPLIT_PERCENT = 80
 saveModel = False
-<<<<<<< HEAD
-=======
-tst = "ok"
->>>>>>> dev
 
 def printHeader(headline):
     print(B + T + '\nEleonora' + W + " - " + headline + "\n\n")
