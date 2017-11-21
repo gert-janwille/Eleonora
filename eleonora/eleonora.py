@@ -1,31 +1,12 @@
-# TODO: 
-#
-#   PROJECT_NAME:
-#
-#   1. Detect faces, save and crop
-#
-#   2. Face recognition
-#       - Predict Name
-#       - If name is unknown Ask name and learn Name
-#           - New Person Class:
-#               - First name
-#               - Lastname
-#               - social media,... (for other functions)
-#
-#   3. Predict Feelings
-#       - Interact with feelings:
-#           - happy => happy song?
-#           - sad => make happy song?
-#           - angry => relax song?
-#
-#   4. Talk with bot
-#       - predict what user said
-#
-#   5. Response to user
-#       - talk back
-#
-#   6. Movements
-#       - Neck movements (left - right - up - down)
+import sys
+import time
+import eleonora.common.ui as ui
+from eleonora.common.constants import *
+import eleonora.modules.detectFaces as df
 
-def main():
-    print("Starting Eleonora")
+def main(args):
+    ui.clearScreen()
+    print ('[' + T + '*' + W + '] Starting Eleonora %s at %s' %(VERSION, time.strftime("%Y-%m-%d %H:%M")))
+
+    # Start Looking for faces
+    df.detectFaces()

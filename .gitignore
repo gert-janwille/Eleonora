@@ -19,3 +19,16 @@ var/
 
 settings.py
 Icon?
+
+eleonora/training/**/*.jpg
+eleonora/training/**/*.png
+eleonora/training/**/*.zip
+
+eleonora/data/**/*.jpg
+eleonora/data/**/*.png
+eleonora/data/**/*.zip
+
+.datasets/
+
+training_data/faces/*
+models/*

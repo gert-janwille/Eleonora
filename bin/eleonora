@@ -8,5 +8,39 @@ dir_of_executable = os.path.dirname(__file__)
 path_to_project_root = os.path.abspath(os.path.join(dir_of_executable, '..'))
 sys.path.insert(0, path_to_project_root)
 os.chdir(path_to_project_root)
-from eleonora.eleonora import main
-main()
+
+import eleonora.training.train as train
+import eleonora.eleonora as brain
+
+os.system('cls' if os.name == 'nt' else 'clear')
+
+options = {
+    "run": brain.main,
+    "train" : train.main
+}
+
+def exitCode(args, status):
+    print("  ______ _                                   \n |  ____| |                                 \n | |__  | | ___  ___  _ __   ___  _ __ __ _ \n |  __| | |/ _ \/ _ \| '_ \ / _ \| '__/ _` |\n | |____| |  __/ (_) | | | | (_) | | | (_| |\n |______|_|\___|\___/|_| |_|\___/|_|  \__,_|\n ")
+    print(status)
+    a = input('Starting Mainframe? [y/N]')
+    if a == 'y':
+        brain.main(args)
+    else:
+        sys.exit("Shutting Eleonora Down")
+
+args = sys.argv[1:]
+if len(args)<= 0:
+    exitCode(args, "No Params Given!")
+
+
+try:
+    options[args[0]](args)
+
+except KeyboardInterrupt:
+    print('  • interrupted by user\n')
+
+except EOFError:
+    print('  • interrupted by error\n')
+
+# except:
+#     exitCode(args, "No valid Params Given!")
