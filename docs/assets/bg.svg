@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1440px" height="900px" viewBox="0 0 1440 900" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD">
+            <g id="Group" transform="translate(0.000000, -2.000000)">
+                <polygon id="Rectangle" fill="#F7B8B3" points="0 0 527.857936 1.28857143 1160 689.385714 968.168701 902 0 902"></polygon>
+                <polygon id="Rectangle-2" fill="#EDEEF2" points="527 1 1440 1 1440 386.78839 1160.56276 690"></polygon>
+                <polygon id="Path-2" fill="#D8D8D8" points="1160 690 967 902 1353 902"></polygon>
+                <polygon id="Rectangle-3" fill="#732D30" points="1440 387 1440 902 1350.96774 902 1160 689.5625"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

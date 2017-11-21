@@ -28,7 +28,7 @@ def main(args):
 
 
     # Does the model needs to be saved?
-    if input('Save Model? [y/N] ') == "y":
+    if input('Save Model? (y/[N]) ') == "y":
         saveModel = True;
 
 

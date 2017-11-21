@@ -35,15 +35,20 @@ def convolutional_neural_network(training_images, test_images, y_train, y_test, 
     input_shape = (img_rows, img_cols,1)
     print(K.image_data_format())
 
+    showImages(5, training_images, y_train)
+
     # Reshape Dataset
+    # FIXME: image can't be displayed when doing this
     training_images = np.array(training_images).reshape((len(training_images),img_rows, img_cols,1))
     test_images = np.array(test_images).reshape((len(test_images),img_rows, img_cols,1))
 
     # Normalisatie
+    # FIXME: Images turn green after doing this
     training_images = np.array(training_images, dtype=np.float32)
     test_images = np.array(test_images, dtype=np.float32)
     training_images /= 255
     test_images /= 255
+
 
     # Building the Model
     model = Sequential()
@@ -59,14 +64,17 @@ def convolutional_neural_network(training_images, test_images, y_train, y_test, 
 
     model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.Adagrad(), metrics=['accuracy'])
 
-    # Train the CNN
-    print("\n[" + T + "*" + W + "] Start Training")
-    model.fit(training_images, y_train, batch_size=batch_size, epochs=epochs, verbose=1)
-    print("[" + T + "+" + W + "] Done Training\n")
 
-    # Print the accuracy score
-    score = model.evaluate(test_images, y_test, verbose=1)
-    print("[" + T + "!" + W + "] Accuraty Score of: " + B + str(score[1]*100)+ "%" + W + "\n")
+    if input("[" + R + "!" + W + "] Start Training? (y/[N]) ") == "y":
+        
+        # Train the CNN
+        print("\n[" + T + "*" + W + "] Start Training")
+        model.fit(training_images, y_train, batch_size=batch_size, epochs=epochs, verbose=1)
+        print("[" + T + "+" + W + "] Done Training\n")
 
-    if save:
-        modelToJSON(model)
+        # Print the accuracy score
+        score = model.evaluate(test_images, y_test, verbose=1)
+        print("[" + T + "!" + W + "] Accuraty Score of: " + B + str(score[1]*100)+ "%" + W + "\n")
+
+        if save:
+            modelToJSON(model)

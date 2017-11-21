@@ -9,6 +9,8 @@
 #
 
 import os
+import matplotlib.pyplot as plt
+from skimage.io import imread, imshow
 
 VERSION = "BETA 0.0.1"
 
@@ -27,3 +29,20 @@ C = '\033[36m'   # cyan
 GR = '\033[37m'  # gray
 T = '\033[93m'   # tan
 B = '\033[1m' # bold
+
+
+def showImages(amount, arr, larr):
+    fig = plt.figure(figsize=(16, 9))
+    for i in range(0,amount):
+        ax = fig.add_subplot(2, 5, i+1)
+        imshow(arr[i])
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
+        plt.axis('off')
+        plt.legend('off')
+
+        ax.set_title(larr[i])
+        # x and y axis should be equal length
+        x0,x1 = ax.get_xlim()
+        y0,y1 = ax.get_ylim()
+    plt.show()
