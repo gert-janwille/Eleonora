@@ -3,7 +3,6 @@
     <img width="250" heigth="250" src="https://raw.github.com/gert-janwille/Eleonora/master/docs/assets/eleonora-official.png">
   </a>
   <br/>
-  <h1>Mrs. Eleonora</h1>
   <p>
     Mrs. Eleonora is an Artificial Intelligence Robot made to recognize, greet and learn persons. She will recognize emotions to be able to interact with the user and give the user support.
 </div>
@@ -39,7 +38,7 @@ To install the packages run the following command
 
 ### Main Functions
 * first
-* second 
+* second
 * ...
 
 <br/>
