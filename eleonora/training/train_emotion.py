@@ -10,6 +10,7 @@ from eleonora.utils.preprocessor import preprocess_input, to_categorical
 
 
 def train():
+    
     # parameters
     dataset_name = 'fer2013'
     batch_size = 32 #32
