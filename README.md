@@ -1,10 +1,6 @@
 <div align="center">
   <a href="https://github.com/gert-janwille/Eleonora">
-<<<<<<< HEAD
     <img width="300"" src="https://raw.github.com/gert-janwille/Eleonora/master/docs/assets/eleonora-official.png">
-=======
-    <img width="250" height="250" src="https://raw.github.com/gert-janwille/Eleonora/master/docs/assets/eleonora-official.png">
->>>>>>> 8d3ea2bb2f660797274a0d7207a01cb82cb22a73
   </a>
   <br/>
   <br/>
