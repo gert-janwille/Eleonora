@@ -54,7 +54,7 @@ def detectFaces():
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
         gray = cv2.cvtColor(small_frame, cv2.COLOR_BGR2GRAY)
 
-        faces = faceCascade.detectMultiScale(gray, 1.3, 5)
+        faces = faceCascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30,30),flags=0)
 
         countDetection(faces)
 

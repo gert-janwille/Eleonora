@@ -3,8 +3,53 @@
   <head>
     <meta charset="utf-8">
     <title>Mrs. Eleonora</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" type="image/png" href="./assets/favicon.ico" />
+    <link rel="apple-touch-icon" href="./assets/app-icon.png">
+
+    <script>
+     WebFontConfig = {
+       google: {
+         families: ['Roboto:100,400']
+       }
+     };
+
+     (function(d) {
+        var wf = d.createElement('script'), s = d.scripts[0];
+        wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+        wf.async = true;
+        s.parentNode.insertBefore(wf, s);
+     })(document);
+  </script>
   </head>
+
   <body>
-    <h1>Mrs. Eleonora</h1>
+    <main>
+
+      <header class="header-container">
+        <h1><span class="hidden">Mrs. Eleonora</span></h1>
+        <h2>Coming soon!</h2>
+
+        <article class="info-box">
+
+          <div class="info-text">
+            <p class="title">Produced in</p>
+            <p class="light">2017</p>
+          </div>
+
+          <div class="info-text">
+            <p class="title">Designed by</p>
+            <p class="light">gert-janwille</p>
+          </div>
+
+          <div class="info-text">
+            <p class="title">Made Possible by</p>
+            <p class="light">Howest</p>
+          </div>
+
+        </article>
+      </header>
+
+    </main>
   </body>
 </html>

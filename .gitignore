@@ -20,7 +20,6 @@ var/
 settings.py
 Icon?
 
-<<<<<<< HEAD
 eleonora/training/**/*.jpg
 eleonora/training/**/*.png
 eleonora/training/**/*.zip
@@ -28,17 +27,12 @@ eleonora/training/**/*.zip
 eleonora/data/**/*.jpg
 eleonora/data/**/*.png
 eleonora/data/**/*.zip
+eleonora/data/**/*.h5
+eleonora/data/**/*.db
+eleonora/data/**/*.csv
 
 .datasets/
 
-training_data/faces/*
+datasets/**/*
 models/*
-=======
-training/**/*.jpg
-training/**/*.png
-
-eleonora/data/**/*.jpg
-eleonora/data/**/*.png
-
-.datasets/
->>>>>>> dev
+KDEF/*
