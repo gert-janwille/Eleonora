@@ -2,16 +2,21 @@ import os
 import time
 import eleonora.common.ui as ui
 from eleonora.common.constants import *
-from eleonora.utils.input import header
-from eleonora.training.train_emotion import train as trainEmotions
+from eleonora.training.train_emotion import train as trainEmotion
 
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
-os.environ["KERAS_BACKEND"] = "tensorflow"
-
+trainings = {
+    0: ["Emotion Training", trainEmotion]
+}
 
 def main(args):
     ui.clearScreen()
     print ('[' + T + '*' + W + '] Starting TRAINING Eleonora %s at %s' %(VERSION, time.strftime("%Y-%m-%d %H:%M")))
 
-    header("Emotional Training with a Convolutional Neural Network")
-    trainEmotions()
+    # Print list of available trainings
+    print("\n "+B+T+"Available Trainings:"+W)
+    for idx, value in trainings.items():
+        print("\t%s%s%s: %s" %(T,idx, W,value[0]))
+
+    nrTraining = int(input("\nEnter Number > "+T+B))
+    print(W)
+    trainings[nrTraining][1]()

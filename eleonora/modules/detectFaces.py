@@ -11,7 +11,6 @@ counter = 0;
 process_this_frame = True
 
 faceCascade = cv2.CascadeClassifier(FACE_CASCADE_FILE)
-cap = cv2.VideoCapture(0)
 
 
 def saveFace(gray, x, y, w, h):
@@ -45,7 +44,8 @@ def detectFaces():
     global counter
 
     print ('[' + T + '+' + W + '] Looking for faces')
-
+    cap = cv2.VideoCapture(0)
+    
     while process_this_frame:
 
         ret, frame = cap.read()

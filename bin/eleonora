@@ -3,6 +3,8 @@
 
 import sys
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+os.environ["KERAS_BACKEND"] = "tensorflow"
 
 dir_of_executable = os.path.dirname(__file__)
 path_to_project_root = os.path.abspath(os.path.join(dir_of_executable, '..'))

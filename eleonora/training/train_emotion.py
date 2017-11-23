@@ -5,12 +5,13 @@ from keras.preprocessing.image import ImageDataGenerator
 from eleonora.common.constants import *
 from eleonora.utils.datasets import DataManager, split_data
 from eleonora.training.models.cnn import simple_CNN, modelToJSON
-from eleonora.utils.input import ask, message
+from eleonora.utils.input import ask, message, header
 from eleonora.utils.preprocessor import preprocess_input, to_categorical
 
 
 def train():
-    
+    header("Emotional Training with a Convolutional Neural Network")
+
     # parameters
     dataset_name = 'fer2013'
     batch_size = 32 #32
@@ -22,9 +23,6 @@ def train():
     validation_split = .2
     num_classes = 7
     patience = 50
-
-    base_path = '../trained_models/emotion_models/'
-    datasetPath = "./eleonora/training/train_data/faces/_fer/PublicTest/"
 
     # data generator
     data_generator = ImageDataGenerator(
