@@ -2,10 +2,12 @@ import os
 import time
 import eleonora.common.ui as ui
 from eleonora.common.constants import *
-from eleonora.training.train_emotion import train as trainEmotion
+from eleonora.training.modules.train_emotion import train as trainEmotion
+from eleonora.training.modules.train_gender import train as trainGender
 
 trainings = {
-    0: ["Emotion Training", trainEmotion]
+    0: ["Emotion Training", trainEmotion],
+    1: ["Gender Training", trainGender]
 }
 
 def main(args):
@@ -17,6 +19,7 @@ def main(args):
     for idx, value in trainings.items():
         print("\t%s%s%s: %s" %(T,idx, W,value[0]))
 
+    # Ask the input
     nrTraining = int(input("\nEnter Number > "+T+B))
     print(W)
     trainings[nrTraining][1]()

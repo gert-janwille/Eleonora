@@ -3,24 +3,27 @@ from keras.callbacks import ReduceLROnPlateau
 from keras.preprocessing.image import ImageDataGenerator
 
 from eleonora.common.constants import *
-from eleonora.utils.datasets import DataManager, split_data
-from eleonora.training.models.cnn import simple_CNN, modelToJSON
 from eleonora.utils.input import ask, message, header
+from eleonora.utils.datasets import DataManager, split_data
+from eleonora.training.models.cnn import max_CNN, modelToJSON
 from eleonora.utils.preprocessor import preprocess_input, to_categorical
 
 
 def train():
     header("Emotional Training with a Convolutional Neural Network")
-
+    # TODO: Training max
+    # - Tessting max CNN
+    # - probably using simpler_CNN (16/32/64)
     # parameters
     dataset_name = 'fer2013'
+    dense = 32
     batch_size = 32 #32
-    epochs = 10 #1000 (100 => 50%)
+    epochs = 100 #1000
 
     img_rows, img_cols = 48, 48
     input_shape = (img_rows, img_cols, 1)
 
-    validation_split = .2
+    validation_split = .3
     num_classes = 7
     patience = 50
 
@@ -35,13 +38,12 @@ def train():
                             horizontal_flip=True)
 
     # model parameters/compilation
-    model = simple_CNN(input_shape, num_classes)
+    model = max_CNN(input_shape, num_classes, d=dense)
     model.compile(optimizer='adam', loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
     if ask("Network Overview"):
         model.summary()
-
 
     # Load Dataset
     data_loader = DataManager(dataset_name, image_size=input_shape[:2])
@@ -52,6 +54,8 @@ def train():
     training_images, test_images = preprocess_input((training_images, test_images))
     y_train, y_test = to_categorical((y_train, y_test), num_classes)
 
+    # Split data into test and validate set
+    val_images, test_images, y_val, y_test = split_data(test_images, y_test, .5, ("Validation Set", "Test Set"))
 
     # callbacks
     early_stop = EarlyStopping('val_loss', patience=patience)
@@ -70,15 +74,18 @@ def train():
                             epochs=epochs,
                             verbose=1,
                             callbacks=callbacks,
-                            validation_data=(test_images, y_test))
+                            validation_data=(val_images, y_val))
 
 
         message("Done Training")
 
         # Print the accuracy score
         score = model.evaluate(test_images, y_test, verbose=1)
+        print("[" + T + "!" + W + "] Accuraty Score TEST Set of: " + B + str(score[1]*100)+ "%" + W + "\n")
+
+        score = model.evaluate(training_images, y_train, verbose=1)
         print("[" + T + "!" + W + "] Accuraty Score of: " + B + str(score[1]*100)+ "%" + W + "\n")
 
-
+        name = str(int(score[1]*100))
         if ask("Save Model"):
-            modelToJSON(model)
+            modelToJSON(model, name)

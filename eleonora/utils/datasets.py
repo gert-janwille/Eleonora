@@ -100,11 +100,11 @@ class DataManager(object):
         return faces, emotions
 
 
-def split_data(X, y, validation_split=.2):
+def split_data(X, y, validation_split=.2, setName=("Training Set", "Test Set")):
     num_train_samples = int((1 - validation_split)*len(X))
     X_train, y_train, X_test, y_test = X[:num_train_samples], y[:num_train_samples], X[num_train_samples:], y[num_train_samples:]
-    print("\tTraining Set:", len(X_train), len(y_train))
-    print("\tTest Set:", len(X_test), len(y_test))
+    print("\t %s: %s %s" % (setName[0], len(X_train), len(y_train)))
+    print("\t %s: %s %s" % (setName[1], len(X_test), len(y_test)))
     return X_train, X_test, y_train, y_test
 
 def get_class_to_arg(dataset_name='fer2013'):

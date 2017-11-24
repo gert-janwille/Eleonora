@@ -30,6 +30,7 @@ eleonora/data/**/*.zip
 eleonora/data/**/*.h5
 eleonora/data/**/*.db
 eleonora/data/**/*.csv
+eleonora/data/**/*.dat
 
 .datasets/
 
