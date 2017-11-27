@@ -1,22 +1,25 @@
 import os
 import cv2
+import gc
 import keras
 from keras.models import model_from_json
 from scipy.misc import imresize
 import numpy as np
 
+gc.collect()
+
 
 EMOTIONS = ['angry', 'disgusted', 'fearful', 'happy', 'sad', 'surprised', 'neutral']
 cascade_classifier = cv2.CascadeClassifier("./face_detect/haarcascades/haarcascade_frontalface_default.xml")
-height = width = 20
+height = width = 48
 
 # load json and create model
-json_file = open('../eleonora/data/models/cnn_model.json', 'r')
+json_file = open('../eleonora/data/models/model_64.json', 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 
 model = model_from_json(loaded_model_json)
-model.load_weights("../eleonora/data/models/model.h5")
+model.load_weights("../eleonora/data/models/model_64.h5")
 
 print("Loaded model from disk")
 

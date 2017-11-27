@@ -5,20 +5,19 @@ from keras.preprocessing.image import ImageDataGenerator
 from eleonora.common.constants import *
 from eleonora.utils.input import ask, message, header
 from eleonora.utils.datasets import DataManager, split_data
-from eleonora.training.models.cnn import max_CNN, modelToJSON
+from eleonora.training.models.cnn import simpler_CNN, modelToJSON
 from eleonora.utils.preprocessor import preprocess_input, to_categorical
 
+# TODO: use simple_CNN
 
 def train():
     header("Emotional Training with a Convolutional Neural Network")
-    # TODO: Training max
-    # - Tessting max CNN
-    # - probably using simpler_CNN (16/32/64)
+
     # parameters
     dataset_name = 'fer2013'
-    dense = 32
+    dense = 16
     batch_size = 32 #32
-    epochs = 100 #1000
+    epochs = 200 #1000
 
     img_rows, img_cols = 48, 48
     input_shape = (img_rows, img_cols, 1)
@@ -38,7 +37,7 @@ def train():
                             horizontal_flip=True)
 
     # model parameters/compilation
-    model = max_CNN(input_shape, num_classes, d=dense)
+    model = simpler_CNN(input_shape, num_classes, d=dense)
     model.compile(optimizer='adam', loss='categorical_crossentropy',
                   metrics=['accuracy'])
 

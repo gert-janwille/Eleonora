@@ -13,3 +13,9 @@ def warning(m):
 
 def header(headline):
     print(B + T + '\nEleonora' + W + " - " + headline + "\n\n")
+
+def quit(interface = False, value = ""):
+    if not interface:
+        return value == "quit" or value == "q"
+    else:
+        interface.waitKey(1) & 0xFF == ord('q')
