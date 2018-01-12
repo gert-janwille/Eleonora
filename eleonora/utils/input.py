@@ -1,4 +1,4 @@
-from eleonora.common.constants import *
+import eleonora.utils.config as config
 
 def ask(q):
     if input("[" + R + "!" + W + "] " + q + "? (y/[N]) ") == "y":

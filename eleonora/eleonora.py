@@ -1,113 +1,113 @@
-import sys
 import cv2
-import time
-import dlib
 import numpy as np
-import threading
+import eleonora.utils.config as config
+from keras.models import load_model, model_from_json
 
-import eleonora.common.ui as ui
-from eleonora.common.constants import *
-
-import eleonora.modules.speech as speech
-import eleonora.modules.uiFace as uiFace
-
-from eleonora.utils.inference import *
+from eleonora.modules import AI, DB
+from eleonora.utils.util import *
 from eleonora.utils.input import quit
-from eleonora.utils.visualizer import *
+
+def detected_callback():
+    # TODO: SPEAK & LISTEN (person is available in config.scaned_person)
+    #       - multiple keywords
+    #       OR
+    #       - stop snowboy and start speech_recognition (internet connection needed)
+    #       - Let Eleonora speak gtts
+    #
+    # https://ggulati.wordpress.com/2016/02/24/coding-jarvis-in-python-3-in-2016/
+
+    print ("hotword detected")
+
+def main():
+    message('Starting Eleonora...')
+    # loading models
+    emotion_classifier = load_model(config.emotion_model_path, compile=False)
+    facial_classifier = model_from_json(getJson(config.facial_json_path_mat))
+
+    # load weights
+    AI.load_weights(facial_classifier, config.facial_math_path)
+
+    # getting input shapes
+    emotion_target_size = emotion_classifier.input_shape[1:3]
+    facial_target_size = facial_classifier.input_shape[1:3]
 
 
-number_of_detection = 5
-wait_to_sleep = 30
+    # Initialize Database
+    db = DB.createDatabase(config.database_path)
+    # Initialize HotKeyListener
+    listener = AI.HotKeyListener().listen(detected_callback)
+    # Initialize SpeechRecognition
+    speech = AI.SpeechRecognition(lang='nl')
+    speech.talk('Hallo iedereen')
 
-eyeWidth, eyeHeight = 80, 100
-process_this_frame = True
 
-detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('./eleonora/data/haarcascades/shape_predictor_68_face_landmarks.dat')
-
-dx = dy = 0
-Eleonora = uiFace.CreateFace("EleonoraFace", 255, eyeWidth, eyeHeight, 2, (0,0,0))
-
-def listenWhileSleep():
-    while True:
-        speech.listen()
-
-        inputSpeech = input("call me > ")
-
-        if inputSpeech.lower() == 'hi':
-            run()
-            break
-
-        if quit(value=inputSpeech):
-            break
-
-def run():
-    global dx, dy
-    counter = 0
-    preFace = 0
-    sleepTimer = wait_to_sleep
+    # Read Database
+    face_db = db.read(key="persons")
 
     cap = cv2.VideoCapture(0)
+    samePerson = (False, 0)
 
-    while process_this_frame:
-        ret, frame = cap.read()
-        frame = convertSequence(frame, (.25, .25), True)
-        faces = detector(frame, 1)
+    while config.process_this_frame:
+        # Read cap and preprocess frame
+        frame = cap.read()[1]
+        frame, out = convertSequence(frame, grayscale=False)
 
-        counter = startDetection(counter, faces, number_of_detection)
+        # Detect Faces, same person and output file
+        flag, samePerson, frame, sFile = detect_faces(frame, emotion_target_size, samePerson[1])
 
-        needToSleep, sleepTimer = timeToSleep(faces, sleepTimer, wait_to_sleep)
+        if config.VERBOSE:
+            print(config.scaned_person)
 
-        closingEyes = remap(sleepTimer, 0, wait_to_sleep, eyeHeight, 1)
+        # Reset Person
+        if not flag:
+            resetScanedPerson()
 
-        if needToSleep:
-            Eleonora.sleep(dx, dy)
-            Eleonora.show()
+        # Reset Time
+        if flag and config.scaned_person:
+            config.reset_time = 10
 
-            destroy(cap)
-            listenWhileSleep()
-            break
+        # If no scaned person detect one
+        if flag and not config.scaned_person:
+            print('+++ face detected and scaned_person is empty')
 
-        if len(faces) <= 0:
-            dx, dy = backToZero(dx, dy, uiFace._getScreenSizes(), Eleonora.eyeSpace, eyeWidth, eyeHeight)
+            # Read Database
+            face_db = db.read(key="persons")
 
-        Eleonora.moveEyes(dx, dy, closingEyes)
+            if not samePerson[0]:
+                if db.isEmpty("persons"):
+                    # add face to db
+                    status, person, face_db = DB.insertPerson(db, sFile)
+                else:
+                    # Loop over db
+                    person = identifyPerson(sFile, facial_target_size, facial_classifier, face_db)
 
-        # Speak when face is detect
-        if preFace != len(faces):
-            if len(faces) > 0:
-                threading.Thread(target=speech.welcome, args=("Hallo, Ik ken jou nog niet.", "nl")).start()
-            preFace = len(faces)
+                # Ask name or set scaned person
+                if person == False:
+                    print('ask name')
+                    status, person, face_db = DB.insertPerson(db, sFile)
+                else:
+                    print('welcome %s'% person['first_name'])
+                    config.scaned_person = person
 
-        for (i, face) in enumerate(faces):
+            # # Predict Emotions
+            # emotion_recognition = AI.Emotion_Recognizer(emotion_classifier)
+            # emotion_text = emotion_recognition.predict(frame)
+            # print(emotion_text)
 
-            shape = predictor(frame, face)
-            shape = shape_to_np(shape)
+            # screenUtil(emotion_text, verbose=config.VERBOSE)
 
-            (x, y, w, h) = rect_to_bb(face)
-            dx, dy = int(x*2), int(y*2)
+        # if config.VERBOSE:
+        #     out = cv2.cvtColor(out, cv2.COLOR_RGB2BGR)
+        #     out = cv2.resize(out, (0, 0), fx=.5, fy=.5)
+        #     cv2.imshow('window_frame', out)
 
-            if counter >= number_of_detection:
-                draw_bounding_box((x, y, w, h), frame, (0, 255, 0))
-                cv2.putText(frame, "Face #{}".format(i + 1), (x - 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-                for (x, y) in shape:
-                    cv2.circle(frame, (x, y), 1, (0, 0, 255), -1)
-
-
-        cv2.imshow('Video', frame)
-
-        Eleonora.show()
-
-        if quit(interface=cv2):
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
     # When everything is done, release the capture
-    destroy(cap)
+    cap.release()
+    listener.stop()
 
 
-def main(args):
-    ui.clearScreen()
-    print ('[' + T + '*' + W + '] Starting Eleonora %s at %s' %(VERSION, time.strftime("%Y-%m-%d %H:%M")))
-
-    run()
+if __name__ == '__main__':
+    main()

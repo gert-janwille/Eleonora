@@ -32,6 +32,11 @@ eleonora/data/**/*.db
 eleonora/data/**/*.csv
 eleonora/data/**/*.dat
 
+eleonora/data/hotkeys/*
+eleonora/data/models/*
+eleonora/data/haarcascades/*
+eleonora/modules/snowboy/**/*.so
+
 .datasets/
 
 datasets/**/*
