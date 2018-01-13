@@ -1,0 +1,22 @@
+TODO: SKYPE
+
+TODO: SMS
+
+TODO: CALLING
+
+TODO: JOKE TELLING
+
+TODO: RECIPES
+
+TODO: VIDEO STREAMING (pet/security cam)
+
+TODO: UI - MAINFRAME
+      - Touching Screen show all functions
+        - Recipes, Jokes, Cam, selfie?,...
+
+TODO: ELEONORA IOS APP
+
+TODO: NORA NETWORK
+      - Building an api to connect over wifi
+      - Need to work online and offline,
+        - offline => when internet connection push online

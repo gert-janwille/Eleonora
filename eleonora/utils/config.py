@@ -8,6 +8,9 @@
 #
 #
 
+VERSION = '1.0.0'
+
+MOMENTUM = 5
 VERBOSE = 1
 width = height = 64
 process_this_frame = True
@@ -24,6 +27,7 @@ frame_window = 10
 emotion_offsets = (20, 40)
 CUTSIZES = (18, 18)
 
+AUDIO_PREFIX = './eleonora/data/wav/'
 AUDIO_PATH = './eleonora/data/wav/speech.wav'
 
 database_path = './eleonora/data/database.json'
@@ -38,6 +42,8 @@ PREDICT_ACC = 0.3
 HOTKEYS = [
     './eleonora/data/hotkeys/nora.pmdl'
 ]
+
+EXIT_WORDS = ['bedankt', 'tot ziens', 'salu', 'niets']
 
 # Console colors
 W = '\033[0m'    # white (normal)

@@ -1,9 +1,13 @@
+import os
+import random
 import threading
 import numpy as np
 from gtts import gTTS
 from scipy.io import loadmat
-import eleonora.utils.config as config
+import speech_recognition as sr
 from playsound import playsound
+import eleonora.utils.config as config
+from eleonora.utils.input import message
 from eleonora.utils.util import getVerifyFile
 from scipy.spatial.distance import cosine as dcos
 from eleonora.modules.snowboy import snowboydecoder
@@ -19,7 +23,6 @@ class Emotion_Recognizer(object):
         emotion_label_arg = np.argmax(emotion_prediction)
         emotion_text = self.labels[emotion_label_arg]
         return emotion_text
-
 
 class Facial_Recognizer(object):
     def __init__(self, model, sizes=(32,32)):
@@ -101,15 +104,19 @@ class HotKeyListener(object):
         self.audio_gain = audio_gain
 
     def listener(self):
-        print("--- Detect HotKeys")
+        message('Start Detecting Hotkeys')
         detector = snowboydecoder.HotwordDetector(self.hotkeys, sensitivity=self.sensitivity, audio_gain=self.audio_gain)
+        self.detector = detector
         detector.start(self.callback)
 
     def listen(self, callback):
         self.callback = callback
         thread_listener = threading.Thread(target=self.listener)
         thread_listener.start()
-        return thread_listener
+
+    def stop(self):
+        self.detector.terminate()
+
 
 class SpeechRecognition(object):
     def __init__(self, lang='en-us'):
@@ -118,3 +125,71 @@ class SpeechRecognition(object):
     def talk(self, text):
         gTTS(text=text, lang=self.lang).save(config.AUDIO_PATH)
         playsound(config.AUDIO_PATH)
+
+    def welcome(self):
+        playsound(config.AUDIO_PREFIX + 'welcome/welcome.wav')
+
+    def response(self):
+        try:
+            name = config.scaned_person['first_name']
+        except Exception:
+            name = False
+
+        if name:
+            playsound(config.AUDIO_PREFIX + 'response/ja.wav')
+            self.talk(name)
+            playsound(config.AUDIO_PREFIX + 'response/nameResponce.wav')
+        else:
+            playsound(config.AUDIO_PREFIX + 'response/generalResponce.wav')
+
+    def welcomePerson(self, name):
+        files = getFiles('welcomePerson')
+
+        playsound(config.AUDIO_PREFIX + 'welcome/hallo.wav')
+        self.talk(name)
+        playsound(config.AUDIO_PREFIX + 'welcome/' + random.choice(files))
+        playsound(config.AUDIO_PREFIX + 'response/nameResponce.wav')
+
+
+    def ping(self, high=False):
+        if high:
+            f = 'ding.wav'
+        else:
+            f = 'dong.wav'
+        playsound(config.AUDIO_PREFIX + f)
+
+    def tts(self, audio, r):
+        oeps = getFiles('oeps')
+        try:
+            data = r.recognize_google(audio, language="nl-BE")
+            print("You said: " + data)
+
+            # TODO: process data
+            if data.lower() in config.EXIT_WORDS:
+                return True
+            else:
+                return False
+
+        except sr.UnknownValueError:
+            playsound(config.AUDIO_PREFIX + 'error/' + random.choice(oeps))
+        except sr.RequestError as e:
+            playsound(config.AUDIO_PREFIX + 'error/' + random.choice(oeps))
+
+    def listen(self):
+        w = getFiles('yourewelcome')
+        r = sr.Recognizer()
+        hasToQuit = False
+
+        with sr.Microphone() as source:
+            while not hasToQuit:
+                hasToQuit = self.tts(r.listen(source), r)
+        playsound(config.AUDIO_PREFIX + 'thanks/' + random.choice(w))
+
+def getFiles(key):
+    s = []
+    path = './eleonora/data/wav/'
+    for (dirname, dirs, files) in os.walk(path):
+        for filename in files:
+            if filename.startswith(key):
+                s.append(filename)
+    return s

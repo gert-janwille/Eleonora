@@ -31,6 +31,7 @@ eleonora/data/**/*.h5
 eleonora/data/**/*.db
 eleonora/data/**/*.csv
 eleonora/data/**/*.dat
+eleonora/data/**/*.wav
 
 eleonora/data/hotkeys/*
 eleonora/data/models/*
