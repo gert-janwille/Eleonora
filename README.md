@@ -71,4 +71,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 * Accomplished by [NMCT](http://www.howest.be/Default.aspx?target=pih&lan=nl&item=71&gclid=EAIaIQobChMI29Cbq9-41wIVA2wbCh20MwlUEAAYASAAEgIwYPD_BwE) & [Devine](http://www.howest.be/Default.aspx?target=pih&lan=nl&item=1094)
-* Name by Laurence

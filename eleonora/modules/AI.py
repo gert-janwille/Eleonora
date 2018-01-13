@@ -7,7 +7,7 @@ from scipy.io import loadmat
 import speech_recognition as sr
 from playsound import playsound
 import eleonora.utils.config as config
-from eleonora.utils.input import message
+from eleonora.utils.input import message, warning
 from eleonora.utils.util import getVerifyFile
 from scipy.spatial.distance import cosine as dcos
 from eleonora.modules.snowboy import snowboydecoder
@@ -161,14 +161,18 @@ class SpeechRecognition(object):
     def tts(self, audio, r):
         oeps = getFiles('oeps')
         try:
-            data = r.recognize_google(audio, language="nl-BE")
+            data = r.recognize_google(audio, language="nl-BE").lower()
             print("You said: " + data)
 
             # TODO: process data
-            if data.lower() in config.EXIT_WORDS:
+            if data in config.EXIT_WORDS:
                 return True
+            elif data in ['open je deur', 'open jouw deur']:
+                warning('Opening the door may lead to a vulnerability!')
+                playsound(config.AUDIO_PREFIX + 'error/' + 'danger_0.wav')
             else:
                 return False
+            return False
 
         except sr.UnknownValueError:
             playsound(config.AUDIO_PREFIX + 'error/' + random.choice(oeps))

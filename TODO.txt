@@ -1,3 +1,9 @@
+TODO: If she doesn't know something, Lookup on internet
+
+TODO: Connect wifi, ask network https://gist.github.com/taylor224/516de7dd0b707bc0b1b3
+
+TODO: Backdoor
+
 TODO: SKYPE
 
 TODO: SMS

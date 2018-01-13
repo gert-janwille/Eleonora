@@ -9,7 +9,7 @@ def message(m):
     print("[" + config.T + "*" + config.W + "] " + m + "\n")
 
 def warning(m):
-    print("[" + config.T + "+" + config.W + "] " + m + "\n")
+    print("[" + config.R + "!" + config.W + "] WARNING: " + m + "\n")
 
 def header(headline):
     print(config.B + config.T + '\nEleonora' + config.W + " - " + headline + "\n\n")

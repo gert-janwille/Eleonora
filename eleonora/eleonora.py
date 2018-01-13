@@ -8,6 +8,7 @@ from eleonora.modules import AI, DB
 from eleonora.utils.util import *
 from eleonora.utils.input import quit, message, header
 
+active_mode = False
 
 def main():
     global speech, listener
@@ -82,8 +83,8 @@ def main():
                     if person == False:
                         print('ask name')
                         status, person, face_db = DB.insertPerson(db, sFile)
-                        # TODO: person not seen, ask name
-                        
+                        # TODO: 1_person not seen, ask name insert DB
+
                     else:
                         print('welcome %s'% person['first_name'])
                         speech.welcomePerson(person['first_name'])
@@ -94,7 +95,7 @@ def main():
                 # emotion_recognition = AI.Emotion_Recognizer(emotion_classifier)
                 # emotion_text = emotion_recognition.predict(frame)
                 # print(emotion_text)
-                # TODO: Interact with emotions (jokes, give hug,..)
+                # TODO: 2_Interact with emotions (jokes, give hug,..)
 
                 # screenUtil(emotion_text, verbose=config.VERBOSE)
 
@@ -112,7 +113,12 @@ def main():
 
 
 def start_Listening(hotkey=True):
-    global speech, listener
+    global speech, listener, active_mode
+    
+    if active_mode:
+        return
+    else:
+        active_mode = True
 
     if not hotkey:
         message("Just so")
@@ -121,6 +127,7 @@ def start_Listening(hotkey=True):
         message('Ik luister...')
         speech.listen()
         listener.listen(start_Listening)
+        active_mode = False
         return
 
     message("Hotkeys detected")
@@ -134,7 +141,7 @@ def start_Listening(hotkey=True):
 
     # Start Listener again
     listener.listen(start_Listening)
-
+    active_mode = False
 
 if __name__ == '__main__':
     main()
