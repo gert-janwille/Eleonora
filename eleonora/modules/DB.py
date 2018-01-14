@@ -24,7 +24,6 @@ class createDatabase(object):
 
             if saveImg:
                 faceFileName = "%s.jpg"%(image_hash.lower())
-                print(faceFileName)
                 cv2.imwrite('./eleonora/data/faces/' + faceFileName, img)
 
             return True, data, self.data
@@ -33,6 +32,7 @@ class createDatabase(object):
 
 
     def update(self):
+        # TODO: Update db if needed
         print('update into db')
 
     def _saveToFile(self):
@@ -63,7 +63,6 @@ class Scheme(object):
 
 
 def insertPerson(data, db, sFile):
-    print(data)
     if data == "":
         return 200, [], db
     first_name, last_name = data, ''

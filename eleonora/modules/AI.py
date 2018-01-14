@@ -1,4 +1,3 @@
-import os
 import random
 import threading
 import numpy as np
@@ -6,9 +5,10 @@ from gtts import gTTS
 from scipy.io import loadmat
 import speech_recognition as sr
 from playsound import playsound
+from eleonora.modules import Interact
 import eleonora.utils.config as config
-from eleonora.utils.input import message, warning
-from eleonora.utils.util import getVerifyFile
+from eleonora.utils.util import getVerifyFile, getFiles
+from eleonora.utils.input import message, warning, userInput
 from scipy.spatial.distance import cosine as dcos
 from eleonora.modules.snowboy import snowboydecoder
 
@@ -23,6 +23,25 @@ class Emotion_Recognizer(object):
         emotion_label_arg = np.argmax(emotion_prediction)
         emotion_text = self.labels[emotion_label_arg]
         return emotion_text
+
+    def interact(self, speech, emotion):
+        self.speech = speech
+        self.playFile = speech.playFile
+
+        # Say emotion
+        sayEmotion_thread = threading.Thread(name='say emotion', target=self.sayEmotion, args=(emotion,))
+        sayEmotion_thread.start()
+        
+        # Join the main Thread before next saying
+        sayEmotion_thread.join()
+        emotional_interaction = Interact.Emotion(emotion)
+
+
+    def sayEmotion(self, emotion):
+        self.playFile('emotional_state_0.wav', 'emotional/')
+        self.playFile(emotion + '.wav', 'emotional/emotions/')
+        self.playFile('emotional_state_1.wav', 'emotional/')
+
 
 class Facial_Recognizer(object):
     def __init__(self, model, sizes=(32,32)):
@@ -39,7 +58,7 @@ class Facial_Recognizer(object):
         # Loop over db, start new thread(worker)
         for (i, obj) in enumerate(db):
             verifyFrame = getVerifyFile(obj[key], (self.sizes), prefix='./eleonora/data/faces/')
-            t = threading.Thread(target=self.worker, args=(fvec1, verifyFrame, obj))
+            t = threading.Thread(name='Verify Faces', target=self.worker, args=(fvec1, verifyFrame, obj))
             self.threads.append(t)
             t.start()
 
@@ -105,22 +124,57 @@ class HotKeyListener(object):
 
     def listener(self):
         message('Start Detecting Hotkeys')
-        detector = snowboydecoder.HotwordDetector(self.hotkeys, sensitivity=self.sensitivity, audio_gain=self.audio_gain)
-        self.detector = detector
-        detector.start(self.callback)
+        self.detector = snowboydecoder.HotwordDetector(self.hotkeys, sensitivity=self.sensitivity, audio_gain=self.audio_gain)
+        self.detector.start(self.callback)
 
     def listen(self, callback):
         self.callback = callback
-        thread_listener = threading.Thread(target=self.listener)
-        thread_listener.start()
+        self.thread_listener = threading.Thread(name='HotKeyListener', target=self.listener)
+        self.thread_listener.setDaemon(True)
+        self.thread_listener.start()
 
-    def stop(self):
+    def pause(self):
         self.detector.terminate()
+
+    def start(self):
+        self.listener()
 
 
 class SpeechRecognition(object):
     def __init__(self, lang='en-us'):
         self.lang = lang
+        self.path = './eleonora/data/wav/'
+
+    def tts(self, audio, r, option=''):
+        oeps = getFiles('oeps', self.path)
+        try:
+            # Get Text from Speech & Print
+            data = r.recognize_google(audio, language="nl-BE").lower()
+
+            if config.VERBOSE:
+                userInput(data)
+
+            # If there is an option run first and stop
+            if option == 'askName':
+                return data
+
+            # TODO: process data & split in functions
+            # All commands, return true when stop
+            if data in config.EXIT_WORDS:
+                return True
+            elif data in ['nora', 'eleonora']:
+                self.recall()
+            elif data in config.BACKDOOR_COMMANDS:
+                self.openBackdoor()
+            else:
+                return False
+            return False
+
+        # Do something on an Error
+        except sr.UnknownValueError:
+            self.playFile(random.choice(oeps), 'error/')
+        except sr.RequestError as e:
+            self.playFile(random.choice(oeps), 'error/')
 
     def talk(self, text):
         gTTS(text=text, lang=self.lang).save(config.AUDIO_PATH)
@@ -143,13 +197,11 @@ class SpeechRecognition(object):
             self.playFile('generalResponce.wav', 'response/')
 
     def welcomePerson(self, name):
-        files = getFiles('welcomePerson')
+        files = getFiles('welcomePerson', self.path)
 
         self.playFile('hallo.wav', 'welcome/')
         self.talk(name)
         self.playFile(random.choice(files), 'welcome/')
-        self.playFile('nameResponce.wav', 'response/')
-
 
     def ping(self, high=False):
         if high:
@@ -158,45 +210,19 @@ class SpeechRecognition(object):
             f = 'dong.wav'
         self.playFile(f)
 
-    def tts(self, audio, r, option=''):
-        oeps = getFiles('oeps')
-        try:
-            data = r.recognize_google(audio, language="nl-BE").lower()
-            print("You said: " + data)
-
-            if option == 'askName':
-                return data
-
-            # TODO: process data & split in functions
-            if data in config.EXIT_WORDS:
-                return True
-            elif data in ['nora', 'eleonora']:
-                self.playFile('ja.wav', 'response/')
-                self.playFile('generalResponce.wav', 'response/')
-            elif data in ['open je deur', 'open jouw deur']:
-                warning('Opening the door may lead to a vulnerability!')
-                self.playFile('danger_0.wav', 'error/')
-            else:
-                return False
-            return False
-
-        except sr.UnknownValueError:
-            self.playFile(random.choice(oeps), 'error/')
-        except sr.RequestError as e:
-            self.playFile(random.choice(oeps), 'error/')
-
     def listen(self):
-        w = getFiles('yourewelcome')
+        w = getFiles('yourewelcome', self.path)
         r = sr.Recognizer()
         hasToQuit = False
 
         with sr.Microphone() as source:
             while not hasToQuit:
                 hasToQuit = self.tts(r.listen(source), r)
-        playsound(config.AUDIO_PREFIX + 'thanks/' + random.choice(w))
+        self.playFile(random.choice(w), 'thanks/')
+        return True
 
     def getName(self):
-        intro = getFiles('introducing')
+        intro = getFiles('introducing', self.path)
         self.playFile(random.choice(intro), 'introducing/')
         r = sr.Recognizer()
         with sr.Microphone() as source:
@@ -208,11 +234,13 @@ class SpeechRecognition(object):
             folder = ''
         playsound(config.AUDIO_PREFIX + folder + audio)
 
-def getFiles(key):
-    s = []
-    path = './eleonora/data/wav/'
-    for (dirname, dirs, files) in os.walk(path):
-        for filename in files:
-            if filename.startswith(key):
-                s.append(filename)
-    return s
+
+    # FUNCTIONS OF SPEECH
+    def recall(self):
+        self.playFile('ja.wav', 'response/')
+        self.playFile('generalResponce.wav', 'response/')
+
+    def openBackdoor(self):
+        # TODO: Open Backdoor - use new class
+        warning('Opening the door may lead to a vulnerability!')
+        self.playFile('danger_0.wav', 'error/')

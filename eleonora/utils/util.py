@@ -1,3 +1,4 @@
+import os
 import cv2
 import dlib
 import numpy as np
@@ -21,11 +22,9 @@ def detect_faces(frame, sizes, prefaces):
     for face_coordinates in faces:
         x1, x2, y1, y2 = apply_offsets(face_coordinates, config.emotion_offsets)
         frame = sFile = frame[y1:y2, x1:x2]
-        # cv2.imwrite('file.png', sFile)
         try:
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             frame = cv2.resize(frame, (sizes))
-            # cv2.imwrite('grey.png', frame)
         except:
             continue
 
@@ -47,11 +46,9 @@ def convertFacial(f, sizes):
     return f
 
 def resetScanedPerson():
-    if config.scaned_person == []:
-        return
     config.reset_time = config.reset_time - 1
-    # if config.VERBOSE:
-    #     print(config.reset_time)
+    if config.VERBOSE:
+        print(config.reset_time)
     if config.reset_time <= 0:
         message('Resetting scaned person')
         config.scaned_person = []
@@ -124,6 +121,14 @@ def getNames(n):
     n = n.split(' ')
     f, l = n[0], ' '.join(n[1:])
     return f, l
+
+def getFiles(key, path):
+    s = []
+    for (dirname, dirs, files) in os.walk(path):
+        for filename in files:
+            if filename.startswith(key):
+                s.append(filename)
+    return s
 
 def startDetection(counter, arr, numDetections):
     if len(arr) > 0:

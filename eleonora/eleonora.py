@@ -1,5 +1,6 @@
 import cv2
 import time
+import threading
 import numpy as np
 import eleonora.utils.config as config
 from keras.models import load_model, model_from_json
@@ -11,7 +12,7 @@ from eleonora.utils.input import quit, message, header
 active_mode = False
 
 def main():
-    global speech, listener
+    global speech, listener, result
 
     header('Running Eleonora version '+ config.VERSION)
     message('Starting Eleonora...')
@@ -62,11 +63,14 @@ def main():
 
             # Reset Time
             if flag and config.scaned_person:
-                config.reset_time = 10
+                config.reset_time = 30
 
             # If no scaned person detect one
             if flag and not config.scaned_person:
                 message('Face Detected, Ready to identify')
+
+                # Pause listener
+                listener.pause()
 
                 # Read Database
                 face_db = db.read(key="persons")
@@ -82,30 +86,34 @@ def main():
                     if person == False:
                         message('Unknown face - pleas identify')
 
+                        # Get name of user
                         name = start_Listening(option='askName')
-                        if not name:
+                        if name == None:
                             name = start_Listening(option='askName')
-
+                        # Add user or stop asking
                         if name not in ['herken mij niet', 'tot ziens', 'niemand']:
                             status, person, face_db = DB.insertPerson(name, db, sFile)
-                            print('welcome %s'% person['first_name'])
-                            speech.welcomePerson(person['first_name'])
-                            start_Listening(option='listen')
-                            config.scaned_person = person
 
-                    else:
-                        print('welcome %s'% person['first_name'])
-                        speech.welcomePerson(person['first_name'])
-                        start_Listening(option='listen')
-                        config.scaned_person = person
+                    # Welcome and set scaned person
+                    message('welcome %s'% person['first_name'])
+                    config.scaned_person = person
 
-                # # Predict Emotions
-                # emotion_recognition = AI.Emotion_Recognizer(emotion_classifier)
-                # emotion_text = emotion_recognition.predict(frame)
-                # print(emotion_text)
-                # TODO: 2_Interact with emotions (jokes, give hug,..)
+                    # Start welcoming person
+                    welcome_thread = threading.Thread(name='welome Person', target=speech.welcomePerson, args=(person['first_name'],))
+                    welcome_thread.start()
 
-                # screenUtil(emotion_text, verbose=config.VERBOSE)
+                    # Meanwile welcoming predict emotional state
+                    emotion_recognition = AI.Emotion_Recognizer(emotion_classifier)
+                    emotion_text = emotion_recognition.predict(frame)
+                    screenUtil(emotion_text, verbose=config.VERBOSE)
+
+                    # Wait until welcoming is done then interact with emotion
+                    welcome_thread.join()
+                    emotion_recognition.interact(speech, emotion_text)
+                    print('interect is done or not?')
+                    # Restore Listener
+                    listener.start()
+
 
             # if config.VERBOSE:
             #     out = cv2.cvtColor(out, cv2.COLOR_RGB2BGR)
@@ -117,38 +125,39 @@ def main():
 
     # When everything is done, release the capture
     cap.release()
-    listener.stop()
+    listener.pause()
 
 
 def start_Listening(option=''):
-    global speech, listener, active_mode
+    global speech, listener
 
-    if active_mode:
+    if config.active_mode:
         return
     else:
-        active_mode = True
+        config.active_mode = True
 
     if option == 'listen':
-        listener.stop()
+        listener.pause()
         speech.ping()
         message('Ik luister...')
-        speech.listen()
-        listener.listen(start_Listening)
-        active_mode = False
+        if speech.listen():
+            config.active_mode = False
+        listener.start()
+        print('ok')
         return
 
     if option == 'askName':
-        listener.stop()
+        listener.pause()
         speech.ping()
         message('Ik luister...')
         name = speech.getName()
-        listener.listen(start_Listening)
-        active_mode = False
+        config.active_mode = False
+        listener.start()
         return name
 
     message("Hotkeys detected")
     speech.response()
-    listener.stop()
+    listener.pause()
 
     # Start Listening
     speech.ping()
@@ -156,8 +165,8 @@ def start_Listening(option=''):
     speech.listen()
 
     # Start Listener again
-    listener.listen(start_Listening)
-    active_mode = False
+    listener.start()
+    config.active_mode = False
 
 if __name__ == '__main__':
     main()

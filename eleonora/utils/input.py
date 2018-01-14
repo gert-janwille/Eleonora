@@ -8,6 +8,9 @@ def ask(q):
 def message(m):
     print("[" + config.T + "*" + config.W + "] " + m + "\n")
 
+def userInput(m):
+    print("[" + config.B + ">" + config.W + "] " + m + "\n")
+
 def warning(m):
     print("[" + config.R + "!" + config.W + "] WARNING: " + m + "\n")
 

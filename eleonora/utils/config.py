@@ -15,8 +15,9 @@ VERBOSE = 1
 width = height = 64
 process_this_frame = True
 number_of_detection = 5
+active_mode = False
 
-reset_time = 10
+reset_time = 30
 scaned_person = []
 
 # starting lists for calculating modes
@@ -44,6 +45,7 @@ HOTKEYS = [
 ]
 
 EXIT_WORDS = ['bedankt', 'tot ziens', 'salu', 'niets', 'sorry voor het storen']
+BACKDOOR_COMMANDS = ['open je deur', 'open jouw deur']
 
 # Console colors
 W = '\033[0m'    # white (normal)
