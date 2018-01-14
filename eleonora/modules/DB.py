@@ -1,4 +1,5 @@
 import cv2
+import random
 import simplejson as json
 import eleonora.utils.config as config
 from eleonora.utils.util import getJson, crop_center, getNames
@@ -16,14 +17,15 @@ class createDatabase(object):
             return self.data
         return self.data.get(key)
 
-    def insert(self, key, data={}, saveImg=False, img=[], meta=None):
+    def insert(self, key, data={}, saveImg=False, img=[], image_hash=None):
         try:
             self.data[key].append(data)
             self._saveToFile()
 
             if saveImg:
-                faceFileName = "face-%s-%s.jpg"%(meta[0].lower(), meta[1].lower())
-                cv2.imwrite('./data/faces/' + faceFileName, img)
+                faceFileName = "%s.jpg"%(image_hash.lower())
+                print(faceFileName)
+                cv2.imwrite('./eleonora/data/faces/' + faceFileName, img)
 
             return True, data, self.data
         except:
@@ -39,9 +41,10 @@ class createDatabase(object):
 
 
 class Scheme(object):
-    def __init__(self, scheme=None, data=[]):
+    def __init__(self, scheme=None, data=[], image_hash=''):
         self.scheme = scheme
         self.data = data
+        self.image_hash = image_hash
 
     def generateScheme(self):
         if self.scheme == 'person':
@@ -54,16 +57,21 @@ class Scheme(object):
         scheme = {
          "first_name": self.data[0],
          "last_name": self.data[1],
-         "face": "face-%s-%s.jpg"%(self.data[0].lower(), self.data[1].lower())
+         "face": "%s.jpg"%(self.image_hash.lower())
         }
         return scheme
 
 
-def insertPerson(db, sFile):
-    data = input("name > ")
+def insertPerson(data, db, sFile):
+    print(data)
     if data == "":
         return 200, [], db
-    first_name, last_name = getNames(data)
-    personData = Scheme(scheme="person", data=(first_name, last_name)).generateScheme()
-    status, person, face_db = db.insert("persons", data=personData, saveImg=True, img=sFile, meta=(first_name, last_name))
+    first_name, last_name = data, ''
+    image_hash = generateHash()
+
+    personData = Scheme(scheme="person", data=(first_name, last_name), image_hash=image_hash).generateScheme()
+    status, person, face_db = db.insert("persons", data=personData, saveImg=True, img=sFile, image_hash=image_hash)
     return status, person, face_db
+
+def generateHash():
+    return str(random.getrandbits(128))

@@ -43,7 +43,7 @@ HOTKEYS = [
     './eleonora/data/hotkeys/nora.pmdl'
 ]
 
-EXIT_WORDS = ['bedankt', 'tot ziens', 'salu', 'niets']
+EXIT_WORDS = ['bedankt', 'tot ziens', 'salu', 'niets', 'sorry voor het storen']
 
 # Console colors
 W = '\033[0m'    # white (normal)

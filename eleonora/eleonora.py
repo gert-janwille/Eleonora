@@ -73,22 +73,30 @@ def main():
 
                 if not samePerson[0]:
                     if db.isEmpty("persons"):
-                        # add face to db
-                        status, person, face_db = DB.insertPerson(db, sFile)
+                        person = False
                     else:
                         # Loop over db
                         person = identifyPerson(sFile, facial_target_size, facial_classifier, face_db)
 
                     # Ask name or set scaned person
                     if person == False:
-                        print('ask name')
-                        status, person, face_db = DB.insertPerson(db, sFile)
-                        # TODO: 1_person not seen, ask name insert DB
+                        message('Unknown face - pleas identify')
+
+                        name = start_Listening(option='askName')
+                        if not name:
+                            name = start_Listening(option='askName')
+
+                        if name not in ['herken mij niet', 'tot ziens', 'niemand']:
+                            status, person, face_db = DB.insertPerson(name, db, sFile)
+                            print('welcome %s'% person['first_name'])
+                            speech.welcomePerson(person['first_name'])
+                            start_Listening(option='listen')
+                            config.scaned_person = person
 
                     else:
                         print('welcome %s'% person['first_name'])
                         speech.welcomePerson(person['first_name'])
-                        start_Listening(hotkey=False)
+                        start_Listening(option='listen')
                         config.scaned_person = person
 
                 # # Predict Emotions
@@ -112,16 +120,15 @@ def main():
     listener.stop()
 
 
-def start_Listening(hotkey=True):
+def start_Listening(option=''):
     global speech, listener, active_mode
-    
+
     if active_mode:
         return
     else:
         active_mode = True
 
-    if not hotkey:
-        message("Just so")
+    if option == 'listen':
         listener.stop()
         speech.ping()
         message('Ik luister...')
@@ -129,6 +136,15 @@ def start_Listening(hotkey=True):
         listener.listen(start_Listening)
         active_mode = False
         return
+
+    if option == 'askName':
+        listener.stop()
+        speech.ping()
+        message('Ik luister...')
+        name = speech.getName()
+        listener.listen(start_Listening)
+        active_mode = False
+        return name
 
     message("Hotkeys detected")
     speech.response()

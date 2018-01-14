@@ -1,19 +1,9 @@
 {
   "persons": [
     {
-      "last_name": "Wille",
-      "first_name": "Gert-Jan",
-      "face": "face-gert-jan-wille.jpg"
-    },
-    {
-      "last_name": "Bauters",
-      "first_name": "Chris",
-      "face": "face-chris-bauters.jpg"
-    },
-    {
-      "last_name": "Wylin",
-      "first_name": "Delphine",
-      "face": "face-delphine-wylin.jpg"
+      "first_name": "gert jan",
+      "last_name": "",
+      "face": "210084903765548633522294995059193260620.jpg"
     }
   ]
 }

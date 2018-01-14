@@ -4,6 +4,7 @@ import numpy as np
 import eleonora.utils.config as config
 from statistics import mode
 from eleonora.modules import AI
+from eleonora.utils.input import message
 
 face_detection = cv2.CascadeClassifier(config.detection_model_path)
 
@@ -46,10 +47,13 @@ def convertFacial(f, sizes):
     return f
 
 def resetScanedPerson():
+    if config.scaned_person == []:
+        return
     config.reset_time = config.reset_time - 1
     # if config.VERBOSE:
     #     print(config.reset_time)
     if config.reset_time <= 0:
+        message('Resetting scaned person')
         config.scaned_person = []
         config.reset_time = 0
 

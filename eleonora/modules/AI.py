@@ -136,19 +136,19 @@ class SpeechRecognition(object):
             name = False
 
         if name:
-            playsound(config.AUDIO_PREFIX + 'response/ja.wav')
+            self.playFile('ja.wav', 'response/')
             self.talk(name)
-            playsound(config.AUDIO_PREFIX + 'response/nameResponce.wav')
+            self.playFile('nameResponce.wav', 'response/')
         else:
-            playsound(config.AUDIO_PREFIX + 'response/generalResponce.wav')
+            self.playFile('generalResponce.wav', 'response/')
 
     def welcomePerson(self, name):
         files = getFiles('welcomePerson')
 
-        playsound(config.AUDIO_PREFIX + 'welcome/hallo.wav')
+        self.playFile('hallo.wav', 'welcome/')
         self.talk(name)
-        playsound(config.AUDIO_PREFIX + 'welcome/' + random.choice(files))
-        playsound(config.AUDIO_PREFIX + 'response/nameResponce.wav')
+        self.playFile(random.choice(files), 'welcome/')
+        self.playFile('nameResponce.wav', 'response/')
 
 
     def ping(self, high=False):
@@ -156,28 +156,34 @@ class SpeechRecognition(object):
             f = 'ding.wav'
         else:
             f = 'dong.wav'
-        playsound(config.AUDIO_PREFIX + f)
+        self.playFile(f)
 
-    def tts(self, audio, r):
+    def tts(self, audio, r, option=''):
         oeps = getFiles('oeps')
         try:
             data = r.recognize_google(audio, language="nl-BE").lower()
             print("You said: " + data)
 
-            # TODO: process data
+            if option == 'askName':
+                return data
+
+            # TODO: process data & split in functions
             if data in config.EXIT_WORDS:
                 return True
+            elif data in ['nora', 'eleonora']:
+                self.playFile('ja.wav', 'response/')
+                self.playFile('generalResponce.wav', 'response/')
             elif data in ['open je deur', 'open jouw deur']:
                 warning('Opening the door may lead to a vulnerability!')
-                playsound(config.AUDIO_PREFIX + 'error/' + 'danger_0.wav')
+                self.playFile('danger_0.wav', 'error/')
             else:
                 return False
             return False
 
         except sr.UnknownValueError:
-            playsound(config.AUDIO_PREFIX + 'error/' + random.choice(oeps))
+            self.playFile(random.choice(oeps), 'error/')
         except sr.RequestError as e:
-            playsound(config.AUDIO_PREFIX + 'error/' + random.choice(oeps))
+            self.playFile(random.choice(oeps), 'error/')
 
     def listen(self):
         w = getFiles('yourewelcome')
@@ -188,6 +194,19 @@ class SpeechRecognition(object):
             while not hasToQuit:
                 hasToQuit = self.tts(r.listen(source), r)
         playsound(config.AUDIO_PREFIX + 'thanks/' + random.choice(w))
+
+    def getName(self):
+        intro = getFiles('introducing')
+        self.playFile(random.choice(intro), 'introducing/')
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            name = self.tts(r.listen(source), r, option='askName')
+        return name
+
+    def playFile(self, audio, folder=False):
+        if not folder:
+            folder = ''
+        playsound(config.AUDIO_PREFIX + folder + audio)
 
 def getFiles(key):
     s = []
