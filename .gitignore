@@ -31,6 +31,8 @@ eleonora/data/**/*.db
 eleonora/data/**/*.csv
 eleonora/data/**/*.mat
 
+training/data/*
+
 eleonora/modules/snowboy/**/*.so
 
 .datasets/

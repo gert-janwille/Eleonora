@@ -38,7 +38,6 @@ class Emotion(object):
 
     def angry_interaction(self):
         ANGRY_FUNCTIONS = [
-            {"name": 'mindfulness', "func": Mindfulness},
             {"name": 'mindfulness', "func": Mindfulness}
         ]
         return ANGRY_FUNCTIONS

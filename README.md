@@ -38,9 +38,16 @@ $ python bin/eleonora
 ```
 
 ### Training
+
+We use 4 datasets to train or models. You can download them here and place them in the folder `training/data`.
+* [FER2013](https://www.kaggle.com/c/challenges-in-representation-learning-facial-expression-recognition-challenge/data)
+* [IMDB Crop](https://data.vision.ee.ethz.ch/cvl/rrothe/imdb-wiki/)
+* [KDEF](https://www.ugent.be/pp/ekgp/en/research/research-groups/panlab/kdef)
+* [Ifwcrop_grey](http://conradsanderson.id.au/lfwcrop/)
+
 If you want to train the models run the following command to execute the trainings scripts.
 ```
-$ python bin/eleonora --Train
+$ python bin/eleonora train
 ```
 
 <br/>

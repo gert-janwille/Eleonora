@@ -12,12 +12,14 @@ sys.path.insert(0, path_to_project_root)
 os.chdir(path_to_project_root)
 
 import eleonora.eleonora as brain
+import training.train as training
 
 os.system('cls' if os.name == 'nt' else 'clear')
 print("  ______ _                                   \n |  ____| |                                 \n | |__  | | ___  ___  _ __   ___  _ __ __ _ \n |  __| | |/ _ \/ _ \| '_ \ / _ \| '__/ _` |\n | |____| |  __/ (_) | | | | (_) | | | (_| |\n |______|_|\___|\___/|_| |_|\___/|_|  \__,_|\n ")
 
 options = {
-    "run": brain.mainframe
+    "run": brain.mainframe,
+    "train": training.train
 }
 
 args = sys.argv[1:]

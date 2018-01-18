@@ -98,26 +98,27 @@ def engine():
                         else:
                             resetScanedPerson()
 
-                    # Welcome and set scaned person
-                    message('welcome %s'% person['first_name'])
-                    UI.happy(async=True)
-                    config.scaned_person = person
+                    if person != False:
+                        # Welcome and set scaned person
+                        message('welcome %s'% person['first_name'])
+                        UI.happy(async=True)
+                        config.scaned_person = person
 
-                    # Start welcoming person
-                    welcome_thread = threading.Thread(name='welome Person', target=speech.welcomePerson, args=(person['first_name'],))
-                    welcome_thread.start()
+                        # Start welcoming person
+                        welcome_thread = threading.Thread(name='welome Person', target=speech.welcomePerson, args=(person['first_name'],))
+                        welcome_thread.start()
 
-                    # Meanwile welcoming predict emotional state
-                    emotion_recognition = AI.Emotion_Recognizer(emotion_classifier)
-                    emotion_text = emotion_recognition.predict(frame)
-                    screenUtil(emotion_text, verbose=config.VERBOSE)
+                        # Meanwile welcoming predict emotional state
+                        emotion_recognition = AI.Emotion_Recognizer(emotion_classifier)
+                        emotion_text = emotion_recognition.predict(frame)
+                        screenUtil(emotion_text, verbose=config.VERBOSE)
 
-                    # Wait until welcoming is done then interact with emotion
-                    welcome_thread.join()
-                    emotion_recognition.interact(speech, emotion_text)
+                        # Wait until welcoming is done then interact with emotion
+                        welcome_thread.join()
+                        emotion_recognition.interact(speech, emotion_text)
 
-                    # Restore Listener
-                    listener.start()
+                        # Restore Listener
+                        listener.start()
 
 
             # if config.VERBOSE:
@@ -148,7 +149,6 @@ def start_Listening(option=''):
         if speech.listen():
             config.active_mode = False
         listener.start()
-        print('ok')
         return
 
     if option == 'askName':

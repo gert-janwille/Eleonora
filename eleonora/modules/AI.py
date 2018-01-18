@@ -238,7 +238,6 @@ class SpeechRecognition(object):
         self.ping()
         with sr.Microphone() as source:
             data = self.tts(r.listen(source), r, option='returndata')
-            print(data,'o')
         return data
 
     def playFile(self, audio, folder=False):

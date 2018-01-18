@@ -1,5 +1,8 @@
-import playsound
+import time
+from playsound import playsound
 from eleonora.modules import UI
+import eleonora.utils.config as config
+from eleonora.utils.input import header
 
 class Mindfulness(object):
     """
@@ -12,15 +15,20 @@ class Mindfulness(object):
         self.speech = speech
         self.folder = 'mindfulness/'
 
-        print('Starting Mindfulness...')
+        header('Starting Mindfulness...')
+        self.playFile('mindfulness_0.wav', self.folder)
+        time.sleep(1)
+        self.playFile('mindfulness_1.wav', self.folder)
 
-        # TODO: Mindfulness
-        #       - Eleonora introduce and say what to do
-        #       - user can see circle who becomes bigger for inhaling
-        #        and smaller when exhaling
-        #       - Eleonora thanks for doing mindfulness
+        UI.mindfulness(async=True)
 
-        UI.mindfulness(async=True) # if async, can play audio dont forget to pause time.sleep()
+        self.playFile('mindfulness_2.wav', self.folder)
+        time.sleep(5)
+        self.playFile('mindfulness_3.wav', self.folder)
+
+        time.sleep(30)
+        UI.happy(async=True)
+        self.playFile('done.wav', self.folder)
 
     def playFile(self, audio, folder=False):
         if not folder:
