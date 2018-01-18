@@ -20,28 +20,35 @@
 Eleonora is build to run on Mac OSX or a Rasberry Pi. To run the code just clone the folder to your machine and cd into the folder.
 Run the following command `$ python bin/eleonora` and she'll be up and running.
 
-### Requirements
+[!] Because of the file size of the trained models, you can download them in folowing link: [DOWNLOAD](https://drive.google.com/open?id=1c7h-AqmnC-DoYonKh4CPXtDpLlOe2Aff) and add them to the data/models folder.
 
-Following are the requirements for getting the most out of Mrs. Eleonora:
 
-### Installation
+## Installation
 
-To install the latest version follow the instructions below:
+Install all needed packages
+```
+$ pip install -r requirements.txt
+```
 
-## Packages
-To install the packages run the following command
-`$ pip install -r requirements.txt`
+Download the trained models from the [Google Drive](https://drive.google.com/open?id=1c7h-AqmnC-DoYonKh4CPXtDpLlOe2Aff) and place them in the folder faces.
 
-## Usage
+Run the following command to start Eleonora
+```
+$ python bin/eleonora
+```
 
-...
-
+### Training
+If you want to train the models run the following command to execute the trainings scripts.
+```
+$ python bin/eleonora --Train
+```
 
 <br/>
 
-### Main Functions
-* first
-* second
+### Interaction Functions
+* **Mindfulness** - This will make the heart rate go low so the user will reduce his/her stress level
+* **Hugging** - Eleonora can't hug of her own. But she can ask to give her a hug.
+* **Joking** - She can be very funny and will tell you a joke when you need it.
 * ...
 
 <br/>
@@ -50,6 +57,7 @@ To install the packages run the following command
 
 * [TensorFlow](https://www.tensorflow.org/) - Artificial Intelligence Framework
 * [OpenCV](https://opencv.org/) - Face Detection
+* [Snowboy](https://snowboy.kitt.ai) - Hotword Detection
 
 ## Contributing
 
