@@ -14,8 +14,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-*.mp3
-*.log
 
 settings.py
 Icon?
@@ -24,22 +22,18 @@ eleonora/training/**/*.jpg
 eleonora/training/**/*.png
 eleonora/training/**/*.zip
 
-eleonora/data/**/*.jpg
-eleonora/data/**/*.png
+eleonora/data/faces/**/*.jpg
+eleonora/data/faces/**/*.png
 eleonora/data/**/*.zip
 eleonora/data/**/*.h5
+eleonora/data/**/*.hdf5
 eleonora/data/**/*.db
 eleonora/data/**/*.csv
-eleonora/data/**/*.dat
-eleonora/data/**/*.wav
+eleonora/data/**/*.mat
 
-eleonora/data/hotkeys/*
-eleonora/data/models/*
-eleonora/data/haarcascades/*
 eleonora/modules/snowboy/**/*.so
 
 .datasets/
 
 datasets/**/*
-models/*
 KDEF/*

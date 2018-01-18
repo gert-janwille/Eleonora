@@ -1,172 +1,115 @@
 import cv2
-import time
+import PIL
 import threading
-import numpy as np
+import tkinter as tk
+from PIL import Image, ImageTk
 import eleonora.utils.config as config
-from keras.models import load_model, model_from_json
-
-from eleonora.modules import AI, DB
-from eleonora.utils.util import *
+from eleonora.modules import AI, DB, Engine
 from eleonora.utils.input import quit, message, header
 
-active_mode = False
+class Application:
+    def __init__(self):
+        self.prefix = './eleonora/data/video/'
+        self.current_image = None
+        self.loop = False
+        self.end = False
 
-def main():
-    global speech, listener, result
+        self.root = tk.Tk()
+        self.root.title("Eleonora")
+        self.panel = tk.Label(self.root)
+        self.panel.pack(padx=0, pady=0)
 
-    header('Running Eleonora version '+ config.VERSION)
-    message('Starting Eleonora...')
-    # loading models
-    emotion_classifier = load_model(config.emotion_model_path, compile=False)
-    facial_classifier = model_from_json(getJson(config.facial_json_path_mat))
+        self.root.protocol('WM_DELETE_WINDOW', self.destructor)
+        self.root.config(cursor="none")
+        self.root.attributes("-fullscreen",True)
 
-    # load weights
-    AI.load_weights(facial_classifier, config.facial_math_path)
+        self.setStream('happy_face.mp4')
+        self.playVideo()
 
-    # getting input shapes
-    emotion_target_size = emotion_classifier.input_shape[1:3]
-    facial_target_size = facial_classifier.input_shape[1:3]
+        self.check_Mode()
 
-    # Initialize Database
-    db = DB.createDatabase(config.database_path)
-    # Initialize HotKeyListener
-    listener = AI.HotKeyListener()
-    listener.listen(start_Listening)
-    # Initialize SpeechRecognition
-    speech = AI.SpeechRecognition(lang='nl')
-    # speech.welcome()
+    def check_Mode(self):
+        self.root.after(config.MILLIS, self.check_Mode)
 
-    # Read Database
-    face_db = db.read(key="persons")
+        if config.preEm == config.emitter:
+            return
+        else:
+            self.vs.release()
 
-    cap = cv2.VideoCapture(0)
-    samePerson = (False, 0)
+            if config.emitter == 'happy':
+                self.setStream('happy_face.mp4')
+            elif config.emitter == 'look':
+                self.setStream('around_look.mp4')
+            elif config.emitter == 'love':
+                self.setStream('love_face.mp4')
+            elif config.emitter == 'mindfulness':
+                self.setStream('mindfulness.mp4')
+            elif config.emitter == 'reset':
+                self.setStream('happy_face.mp4', loop=False) # set True for continuesly moving eyes
+                config.emitter = config.preEm = ''
 
-    message('Starting Life...')
-    while config.process_this_frame:
-        # Running your own FPS
-        if not int(time.time()) % config.MOMENTUM:
+        config.preEm = config.emitter
 
-            # Read cap and preprocess frame
-            frame = cap.read()[1]
-            frame, out = convertSequence(frame, grayscale=False)
+    def setStream(self, mp4, loop=False):
+        if loop:
+            self.loop = loop
+            self.mp4 = mp4
+        try:
+            self.vs = cv2.VideoCapture(self.prefix + self.mp4)
+        except Exception:
+            self.vs = cv2.VideoCapture(self.prefix + mp4)
 
-            # Detect Faces, same person and output file
-            flag, samePerson, frame, sFile = detect_faces(frame, emotion_target_size, samePerson[1])
+        if self.end:
+            self.playVideo()
 
-            # if config.VERBOSE:
-            #     print(config.scaned_person)
+    def playVideo(self):
+        self.sizes = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
+        ret, frame = self.vs.read()
 
-            # Reset Person
-            if not flag:
-                resetScanedPerson()
+        if ret == False:
+            self.end = True
+            message('End of movie')
+            if self.loop:
+                self.setStream(self.mp4, self.loop)
+            else:
+                config.emitter = config.preEm = ''
+                return True
 
-            # Reset Time
-            if flag and config.scaned_person:
-                config.reset_time = 30
+        if ret:
+            frame = cv2.resize(frame, (self.sizes[0],self.sizes[1]))
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+            self.current_image = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=self.current_image)
+            self.panel.imgtk = imgtk
+            self.panel.config(image=imgtk)
 
-            # If no scaned person detect one
-            if flag and not config.scaned_person:
-                message('Face Detected, Ready to identify')
+        self.root.after(1, self.playVideo)
 
-                # Pause listener
-                listener.pause()
-
-                # Read Database
-                face_db = db.read(key="persons")
-
-                if not samePerson[0]:
-                    if db.isEmpty("persons"):
-                        person = False
-                    else:
-                        # Loop over db
-                        person = identifyPerson(sFile, facial_target_size, facial_classifier, face_db)
-
-                    # Ask name or set scaned person
-                    if person == False:
-                        message('Unknown face - pleas identify')
-
-                        # Get name of user
-                        name = start_Listening(option='askName')
-                        if name == None:
-                            name = start_Listening(option='askName')
-                        # Add user or stop asking
-                        if name not in ['herken mij niet', 'tot ziens', 'niemand']:
-                            status, person, face_db = DB.insertPerson(name, db, sFile)
-
-                    # Welcome and set scaned person
-                    message('welcome %s'% person['first_name'])
-                    config.scaned_person = person
-
-                    # Start welcoming person
-                    welcome_thread = threading.Thread(name='welome Person', target=speech.welcomePerson, args=(person['first_name'],))
-                    welcome_thread.start()
-
-                    # Meanwile welcoming predict emotional state
-                    emotion_recognition = AI.Emotion_Recognizer(emotion_classifier)
-                    emotion_text = emotion_recognition.predict(frame)
-                    screenUtil(emotion_text, verbose=config.VERBOSE)
-
-                    # Wait until welcoming is done then interact with emotion
-                    welcome_thread.join()
-                    emotion_recognition.interact(speech, emotion_text)
-                    print('interect is done or not?')
-                    # Restore Listener
-                    listener.start()
+    def destructor(self):
+        self.root.destroy()
+        self.vs.release()
+        cv2.destroyAllWindows()
 
 
-            # if config.VERBOSE:
-            #     out = cv2.cvtColor(out, cv2.COLOR_RGB2BGR)
-            #     out = cv2.resize(out, (0, 0), fx=.5, fy=.5)
-            #     cv2.imshow('window_frame', out)
+def mainframe():
+    try:
+        header('Running Eleonora version '+ config.VERSION)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # start the app
+        pba = Application()
 
-    # When everything is done, release the capture
-    cap.release()
-    listener.pause()
+        # Start Main Engine
+        face_thread = threading.Thread(name='Face', target=Engine.engine)
+        face_thread.setDaemon(True)
+        face_thread.start()
 
+        pba.root.mainloop()
 
-def start_Listening(option=''):
-    global speech, listener
+    except KeyboardInterrupt:
+        print (config.R + '\n' + config.O + '  • interrupted by user\n' + config.W)
 
-    if config.active_mode:
-        return
-    else:
-        config.active_mode = True
-
-    if option == 'listen':
-        listener.pause()
-        speech.ping()
-        message('Ik luister...')
-        if speech.listen():
-            config.active_mode = False
-        listener.start()
-        print('ok')
-        return
-
-    if option == 'askName':
-        listener.pause()
-        speech.ping()
-        message('Ik luister...')
-        name = speech.getName()
-        config.active_mode = False
-        listener.start()
-        return name
-
-    message("Hotkeys detected")
-    speech.response()
-    listener.pause()
-
-    # Start Listening
-    speech.ping()
-    message('Ik luister...')
-    speech.listen()
-
-    # Start Listener again
-    listener.start()
-    config.active_mode = False
+    except EOFError:
+        print (config.R + '\n' + config.O + '  • interrupted by error\n' + config.W)
 
 if __name__ == '__main__':
-    main()
+    mainframe()

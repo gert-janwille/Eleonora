@@ -17,7 +17,7 @@ process_this_frame = True
 number_of_detection = 5
 active_mode = False
 
-reset_time = 30
+reset_time = 15
 scaned_person = []
 
 # starting lists for calculating modes
@@ -39,7 +39,9 @@ emotion_model_path = './eleonora/data/models/fer2013_mini_XCEPTION.102-0.66.hdf5
 detection_model_path = './eleonora/data/haarcascades/haarcascade_frontalface_default.xml'
 
 PREDICT_ACC = 0.3
-
+emitter = ''
+preEm = ''
+MILLIS = 1000
 HOTKEYS = [
     './eleonora/data/hotkeys/nora.pmdl'
 ]

@@ -31,10 +31,10 @@ class Emotion_Recognizer(object):
         # Say emotion
         sayEmotion_thread = threading.Thread(name='say emotion', target=self.sayEmotion, args=(emotion,))
         sayEmotion_thread.start()
-        
+
         # Join the main Thread before next saying
         sayEmotion_thread.join()
-        emotional_interaction = Interact.Emotion(emotion)
+        emotional_interaction = Interact.Emotion(emotion, self.speech)
 
 
     def sayEmotion(self, emotion):
@@ -95,13 +95,14 @@ class Facial_Recognizer(object):
             })
 
 def load_weights(kmodel, path):
+    message('Finding Models...')
     data = loadmat(path, matlab_compatible=False, struct_as_record=False)
     l = data['layers']
     description = data['meta'][0,0].classes[0,0].description
 
     kerasnames = [lr.name for lr in kmodel.layers]
     prmt = (0,1,2,3)
-
+    c = 0
     for i in range(l.shape[1]):
         matname = l[0,i][0,0].name[0]
         if matname in kerasnames:
@@ -114,6 +115,9 @@ def load_weights(kmodel, path):
             assert(l_bias[:,0].shape == kmodel.layers[kindex].get_weights()[1].shape)
             assert(len(kmodel.layers[kindex].get_weights()) == 2)
             kmodel.layers[kindex].set_weights([f_l_weights, l_bias[:,0]])
+            wait = int(0 + (100 - 0) * (c - 0) / ((l.shape[1] - 1) - 0))
+            print("Loading Models: %s%s%s%s" % (config.T, wait, "%", config.W), end="\r")
+            c = c + 1
 
 
 class HotKeyListener(object):
@@ -155,7 +159,7 @@ class SpeechRecognition(object):
                 userInput(data)
 
             # If there is an option run first and stop
-            if option == 'askName':
+            if option == 'returndata':
                 return data
 
             # TODO: process data & split in functions
@@ -226,8 +230,16 @@ class SpeechRecognition(object):
         self.playFile(random.choice(intro), 'introducing/')
         r = sr.Recognizer()
         with sr.Microphone() as source:
-            name = self.tts(r.listen(source), r, option='askName')
+            name = self.tts(r.listen(source), r, option='returndata')
         return name
+
+    def getShort(self):
+        r = sr.Recognizer()
+        self.ping()
+        with sr.Microphone() as source:
+            data = self.tts(r.listen(source), r, option='returndata')
+            print(data,'o')
+        return data
 
     def playFile(self, audio, folder=False):
         if not folder:

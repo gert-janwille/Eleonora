@@ -6,7 +6,7 @@
   <br/>
   <br/>
   <p>
-    Mrs. Eleonora is an Artificial Intelligence Robot made to recognise, greet and learn people. She will recognise emotions to be able to interact with the user and give the user support.
+    Mrs. Eleonora is an Artificial Intelligence Assistant Robot made to recognise, greet and learn people. She will recognise emotions to be able to interact with the user and give the user support.
 </div>
 
 
@@ -17,7 +17,8 @@
 
 ## Getting Started
 
-Following instructions will get you to install & setup Mrs. Eleonora and how to use it. See usage for notes on how to call it.
+Eleonora is build to run on Mac OSX or a Rasberry Pi. To run the code just clone the folder to your machine and cd into the folder.
+Run the following command `$ python bin/eleonora` and she'll be up and running.
 
 ### Requirements
 
@@ -29,7 +30,7 @@ To install the latest version follow the instructions below:
 
 ## Packages
 To install the packages run the following command
-`pip install -r requirements.txt`
+`$ pip install -r requirements.txt`
 
 ## Usage
 
