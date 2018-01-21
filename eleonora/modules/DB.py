@@ -30,11 +30,6 @@ class createDatabase(object):
         except:
             return False, data, self.data
 
-
-    def update(self):
-        # TODO: Update db if needed
-        print('update into db')
-
     def _saveToFile(self):
         with open(self.path, 'w', encoding='utf-8') as outfile:
             json.dump(self.data, outfile)

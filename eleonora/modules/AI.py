@@ -1,7 +1,9 @@
+import os
 import random
 import threading
 import numpy as np
 from gtts import gTTS
+import json, requests
 from scipy.io import loadmat
 import speech_recognition as sr
 from playsound import playsound
@@ -165,11 +167,21 @@ class SpeechRecognition(object):
             # TODO: process data & split in functions
             # All commands, return true when stop
             if data in config.EXIT_WORDS:
+                config.active_mode = False
                 return True
             elif data in ['nora', 'eleonora']:
                 self.recall()
+            elif data in ['sluit af', 'afsluiten', 'slaapwel']:
+                print('sluiten')
+                os._exit(0)
             elif data in config.BACKDOOR_COMMANDS:
                 self.openBackdoor()
+            elif data in config.RANDOM_ACTIVITY_COMMANDS:
+                self.pickRandomActivity()
+            elif data in config.WEATHER_COMMANDS:
+                self.getWeather()
+            elif data in config.NEWS_COMMANDS:
+                self.getLatestNews()
             else:
                 return False
             return False
@@ -250,6 +262,28 @@ class SpeechRecognition(object):
     def recall(self):
         self.playFile('ja.wav', 'response/')
         self.playFile('generalResponce.wav', 'response/')
+
+    def pickRandomActivity(self):
+        Interact.Emotion(None, self)
+
+    def getWeather(self):
+        data = json.loads(requests.get(url=config.WEATHER_URL).text)
+
+        currentTemp = data['main']['temp']
+        maxTemp = data['main']['temp_max']
+        description = data['weather'][0]['description']
+        self.talk('Het is nu %s en %s graden, het word maximum %s'%(description, currentTemp, maxTemp))
+
+    def getLatestNews(self):
+        data = json.loads(requests.get(url=config.NEWS_URL).text)
+        maxart = len(data['articles'])-1
+        self.playFile('news.wav', 'news/')
+
+        for i, art in enumerate(data['articles']):
+            self.talk(art['title'])
+            if i < maxart:
+                self.talk('en')
+
 
     def openBackdoor(self):
         # TODO: Open Backdoor - use new class

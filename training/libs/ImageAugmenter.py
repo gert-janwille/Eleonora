@@ -561,10 +561,6 @@ class ImageAugmenter(object):
         # shouldn't have a noticeable effect on runtimes. They also won't suffer
         # from interpolation problems.
         if self.hflip_prob > 0 or self.vflip_prob > 0:
-            # TODO this currently ignores the setting in
-            # transform_channels_equally and will instead always flip all
-            # channels equally
-
             # if this is simply a view, then the input array gets flipped too
             # for some reason
             images_flipped = np.copy(images)

@@ -43,7 +43,7 @@ def engine():
     samePerson = (False, 0)
 
     message('Starting Life...')
-    print(threading.enumerate())
+    # print(threading.enumerate())
 
     while config.process_this_frame:
         # Running your own FPS
@@ -68,7 +68,7 @@ def engine():
                 config.reset_time = 15
 
             # If no scaned person detect one
-            if flag and not config.scaned_person:
+            if flag and not config.scaned_person and not config.active_mode:
                 message('Face Detected, Ready to identify')
 
                 # Pause listener

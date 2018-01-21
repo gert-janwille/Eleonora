@@ -48,7 +48,6 @@ def convertFacial(f, sizes):
 def resetScanedPerson():
     config.reset_time = config.reset_time - 1
     if config.reset_time <= 0:
-        message('Resetting scaned person')
         config.scaned_person = []
         config.reset_time = 0
 

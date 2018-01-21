@@ -22,6 +22,12 @@ Run the following command `$ python bin/eleonora` and she'll be up and running.
 
 [!] Because of the file size of the trained models, you can download them in folowing link: [DOWNLOAD](https://drive.google.com/open?id=1c7h-AqmnC-DoYonKh4CPXtDpLlOe2Aff) and add them to the data/models folder.
 
+## "Hey Eleonora, what can you do?" :sparkles:
+
+Command | Description
+-- | ------
+...| ...
+<br/>
 
 ## Installation
 
@@ -53,6 +59,8 @@ $ python bin/eleonora train
 <br/>
 
 ### Interaction Functions
+* **News** - She will tell you the latest news
+* **Weather** - She will tell you the weather
 * **Mindfulness** - This will make the heart rate go low so the user will reduce his/her stress level
 * **Hugging** - Eleonora can't hug of her own. But she can ask to give her a hug.
 * **Joking** - She can be very funny and will tell you a joke when you need it.
