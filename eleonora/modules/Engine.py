@@ -55,7 +55,7 @@ def engine():
 
             # Detect Faces, same person and output file
             flag, samePerson, frame, sFile = detect_faces(frame, emotion_target_size, samePerson[1])
-
+            print('ok')
             # if config.VERBOSE:
             #     print(config.scaned_person)
 
@@ -65,12 +65,13 @@ def engine():
 
             # Reset Time
             if flag and config.scaned_person:
-                config.reset_time = 15
+                config.reset_time = 21
 
             # If no scaned person detect one
             if flag and not config.scaned_person and not config.active_mode:
                 message('Face Detected, Ready to identify')
-
+                config.reset_time = 21
+                
                 # Pause listener
                 listener.pause()
 

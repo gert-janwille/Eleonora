@@ -17,7 +17,7 @@ process_this_frame = True
 number_of_detection = 5
 active_mode = False
 
-reset_time = 15
+reset_time = 21
 scaned_person = []
 
 # starting lists for calculating modes

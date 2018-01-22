@@ -148,7 +148,7 @@ class HotKeyListener(object):
         self.detector.terminate()
 
     def start(self):
-        self.listener()
+        self.listen(self.callback)
 
 
 class SpeechRecognition(object):
