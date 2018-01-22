@@ -53,7 +53,7 @@ EXIT_WORDS = ['bedankt', 'tot ziens', 'salu', 'niets', 'sorry voor het storen']
 RANDOM_ACTIVITY_COMMANDS = ['ik verveel me', 'kan je iets voorstellen', 'wat kan ik doen', 'heb je suggesties', 'zoek een activiteit']
 BACKDOOR_COMMANDS = ['open je deur', 'open jouw deur']
 WEATHER_COMMANDS = ['wat is het weer vandaag', 'wat zou het weer zijn', 'welk weer is het', 'wat is het weer']
-NEWS_COMMANDS = ['is er nieuws', 'wat is het nieuws', 'wat is het nieuws van vandaag', 'is er nieuws beschikbaar']
+NEWS_COMMANDS = ['is er nieuws', 'wat is het nieuws', 'wat is het nieuws vandaag', 'wat is het nieuws van vandaag', 'is er nieuws beschikbaar']
 # Console colors
 W = '\033[0m'    # white (normal)
 R = '\033[31m'   # red

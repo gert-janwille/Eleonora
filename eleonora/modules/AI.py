@@ -5,6 +5,7 @@ import numpy as np
 from gtts import gTTS
 import json, requests
 from scipy.io import loadmat
+from eleonora.modules import UI
 import speech_recognition as sr
 from playsound import playsound
 from eleonora.modules import Interact
@@ -13,6 +14,10 @@ from eleonora.utils.util import getVerifyFile, getFiles
 from eleonora.utils.input import message, warning, userInput
 from scipy.spatial.distance import cosine as dcos
 from eleonora.modules.snowboy import snowboydecoder
+
+from eleonora.interact.GetLatestNews import *
+from eleonora.interact.GetWeather import *
+from eleonora.interact.Backdoor import *
 
 class Emotion_Recognizer(object):
     def __init__(self, model):
@@ -267,25 +272,17 @@ class SpeechRecognition(object):
         Interact.Emotion(None, self)
 
     def getWeather(self):
-        data = json.loads(requests.get(url=config.WEATHER_URL).text)
-
-        currentTemp = data['main']['temp']
-        maxTemp = data['main']['temp_max']
-        description = data['weather'][0]['description']
-        self.talk('Het is nu %s en %s graden, het word maximum %s'%(description, currentTemp, maxTemp))
+        weather = GetWeather().generate()
+        self.talk(weather)
+        UI.reset()
 
     def getLatestNews(self):
-        data = json.loads(requests.get(url=config.NEWS_URL).text)
-        maxart = len(data['articles'])-1
-        self.playFile('news.wav', 'news/')
-
-        for i, art in enumerate(data['articles']):
-            self.talk(art['title'])
-            if i < maxart:
-                self.talk('en')
-
+        say = GetLatestNews().generate()
+        self.talk(say)
+        UI.reset()
 
     def openBackdoor(self):
-        # TODO: Open Backdoor - use new class
         warning('Opening the door may lead to a vulnerability!')
         self.playFile('danger_0.wav', 'error/')
+
+        Backdoor()

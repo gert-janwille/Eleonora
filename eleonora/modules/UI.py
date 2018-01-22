@@ -18,13 +18,25 @@ def mindfulness(async=False):
     config.emitter = 'mindfulness'
     waitandreset(30, async)
 
-def waitandreset(seconds, async):
+def news(async=False, manual=False):
+    config.emitter = 'news'
+    waitandreset(3, async, manual)
+
+def weather(async=False, manual=False):
+    config.emitter = 'weather'
+    waitandreset(3, async, manual)
+
+def reset():
+    config.emitter = 'reset'
+
+def waitandreset(seconds, async, manual= False):
     if async:
-        time_thread = threading.Thread(name='waitadnreset', target=startTimer, args=(seconds,))
+        time_thread = threading.Thread(name='waitadnreset', target=startTimer, args=(seconds, manual,))
         time_thread.start()
     else:
         startTimer(seconds)
 
-def startTimer(seconds):
+def startTimer(seconds, manual):
     time.sleep(seconds)
-    config.emitter = 'reset'
+    if not manual:
+        config.emitter = 'reset'

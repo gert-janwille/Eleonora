@@ -44,6 +44,10 @@ class Application:
                 self.setStream('love_face.mp4')
             elif config.emitter == 'mindfulness':
                 self.setStream('mindfulness.mp4')
+            elif config.emitter == 'news':
+                self.setStream('news.mp4')
+            elif config.emitter == 'weather':
+                self.setStream('weather.mp4')
             elif config.emitter == 'reset':
                 self.setStream('happy_face.mp4', loop=False) # set True for continuesly moving eyes
                 config.emitter = config.preEm = ''
@@ -68,7 +72,6 @@ class Application:
 
         if ret == False:
             self.end = True
-            message('End of movie')
             if self.loop:
                 self.setStream(self.mp4, self.loop)
             else:
